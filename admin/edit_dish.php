@@ -58,9 +58,56 @@ require_once('header.php'); ?>
                             </select>
                         </div>
 
+
+                        <div class="form-group" id="disb_box_1">
+                            <label for="category">Dish Details</label>
+                            <?php
+                            if( $current_dish['id'] == 0 ): ?>
+                                <div class="row mb-3">
+                                    <div class="col-5">
+                                        <input type="text" name="attribute[]" class="form-control" id="attribute" placeholder="Add Atribute" required>
+                                    </div>
+                                    <div class="col-5">
+                                        <input type="text" name="price[]" class="form-control" id="price" placeholder="Add Price" required>
+                                    </div>
+                                </div>
+                            <?php
+                            else: 
+                            $current_dish_id = $current_dish["id"];    
+                            $dish_attr = mysqli_query( $con, "SELECT * FROM dish_details WHERE dish_id='$current_dish_id'");   
+                            $result = mysqli_fetch_all($dish_attr, MYSQLI_ASSOC); 
+                            $li = 1;    
+                            foreach( $result as $value ):
+                               
+                            ?>
+                                <div class="row mb-3">
+                                    <div class="col-5">
+                                        <input type="hidden" name="dish_details_id[]" value="<?php echo $value['id']; ?>" >
+
+                                        <input type="text" name="attribute[]" class="form-control" id="attribute" value="<?php echo $value['attribute']; ?>" placeholder="Add Atribute" required>
+                                    </div>
+                                    <div class="col-5">
+                                        <input type="text" name="price[]" value="<?php echo $value['price']; ?>" class="form-control" id="price" placeholder="Add Price" required>
+                                    </div>
+                                    <?php
+                                    if( $li !== 1 ): ?>
+                                        <div class="col-2">
+                                            <button type="button" class="btn btn-danger" onclick="remove_more_item('<?php echo $value['id']; ?>')">Remove More</button>
+                                        </div>
+                                    <?php
+                                    endif; ?>
+                                </div>
+                            <?php
+                            $li++;
+                            endforeach;
+                            endif; ?>  
+                        </div>
+
 						<button type="submit" name="update_dish_item" class="btn btn-primary mr-2">Update Dish</button>
-						<button class="btn btn-light">Cancel</button>
+						<button type="button" class="btn btn-danger" onclick="add_more()">Add More</button>
 					</form>
+
+                    <input type="hidden" name="add_number" id="add_more" class="form-class mt-5" value="1">
                 </div>
               </div>
             </div>
@@ -68,6 +115,33 @@ require_once('header.php'); ?>
 		 </div>
         
 		</div>
+
+        
+
+          <script>
+            function add_more(){
+                var add_more = jQuery('#add_more').val();
+                add_more++;
+                jQuery('#add_more').val(add_more);
+  
+                var dish_box ='<div class="row mb-3" id="box'+add_more+'"><div class="col-5"><input type="text" name="attribute[]" class="form-control" id="attribute" placeholder="Add Atribute" required></div><div class="col-5"><input type="text" name="price[]" class="form-control" id="price" placeholder="Add Price" required></div><div class="col-2"><button type="button" class="btn btn-danger" onclick="remove_more('+add_more+')">Remove More</button></div></div>';
+                jQuery("#disb_box_1").append(dish_box);
+            }
+
+            function remove_more(id){
+                jQuery('#box'+id).remove();
+            }
+
+            function remove_more_item(id){
+                var result = confirm("Are you sure?");
+                if( result ){
+                    var cur_path = window.location.href;
+                    window.location.href = cur_path + "&dish_details_id="+id;
+                }
+            }
+          </script>                          
+
+
         <!-- content-wrapper ends -->
         <!-- partial:../../partials/_footer.html -->
         <!-- content-wrapper ends -->

@@ -4,6 +4,16 @@
  */
 if( isset( $_POST['dish_item_submit'] ) ){
 
+	
+	
+	// spellon_print_r( $attributeArr );
+	// spellon_print_r( $priceArr );
+	// foreach( $attributeArr as $key => $value ){
+
+	// 	echo $priceArr[$key]." : ".$value."<br />";
+	// }
+	// die();
+
 	$name = mysqli_real_escape_string( $con, trim($_POST['name']) );
 	$content = mysqli_real_escape_string( $con, trim($_POST['content']) );
 	$cat_id = mysqli_real_escape_string( $con, trim($_POST['category_id']) );
@@ -21,12 +31,28 @@ if( isset( $_POST['dish_item_submit'] ) ){
 
 
 	$sql_query = "INSERT INTO dish(name, slug, content, thumbnail, category_id) VALUES('$name', '$slug', '$content', '$dish_file_name', '$cat_id')";
-
 	mysqli_query( $con, $sql_query);
+
+	$last_id = mysqli_insert_id( $con );
+	
+	if( $last_id !== 0 ){
+		$attributeArr = $_POST['attribute'];
+		$priceArr = $_POST['price'];
+
+		foreach( $attributeArr as $key => $value ){
+
+			$sql_query_dish_details = "INSERT INTO `dish_details` (`dish_id`, `attribute`, `price`) VALUES ('$last_id', '$value', '$priceArr[$key]');";
+			mysqli_query( $con, $sql_query_dish_details);
+		}
+	}
+
   	spellon_redirect('dishes.php');
 }
 
 
+/**
+ * Store data from database
+ */
 if( isset( $_GET['dish_edit_id'] ) ){
     $current_dish_edit_id =  $_GET['dish_edit_id'];
 
@@ -61,11 +87,29 @@ if( isset( $_POST['update_dish_item'] ) ){
 
 		mysqli_query($con, "UPDATE dish SET name = '$update_name', slug ='$update_slug', content='$update_content', category_id = '$update_category_id', thumbnail='$update_file_name' WHERE id='$update_dish_id'");
 
-
     }else{
 		mysqli_query($con, "UPDATE dish SET name = '$update_name', slug ='$update_slug', content='$update_content', category_id = '$update_category_id' WHERE id='$update_dish_id'");  
     }
 
+
+	$attributeArr = $_POST['attribute'];
+	$priceArr = $_POST['price'];
+	$dishDetailsIdArr = $_POST['dish_details_id'];
+
+	foreach( $attributeArr as $key => $value ){
+		$attr = $value;
+		$price = $priceArr[$key];
+
+		if( isset( $dishDetailsIdArr[$key] ) ){
+			$current_dish_item = $dishDetailsIdArr[$key];
+
+			mysqli_query($con, "UPDATE dish_details SET attribute = '$attr', price ='$price' WHERE id='$current_dish_item'");  
+
+		}else{
+			$sql_current_new_dish_item = "INSERT INTO dish_details (dish_id, attribute, price) VALUES ('$update_dish_id', '$value', '$price');";
+			mysqli_query( $con, $sql_current_new_dish_item);
+		}
+	}
 
 
 
@@ -80,6 +124,15 @@ if( isset( $_GET['dish_delete_id'] ) ){
 	spellon_redirect('dishes.php');
 }
 
+/**
+ * Dish Item Delete
+ */
+if( isset( $_GET['dish_details_id'] ) ){
+	$current_dish_details_deleted_id = $_GET['dish_details_id'];
+	$current_edit_dish_id = $_GET['dish_edit_id'];
+	mysqli_query( $con, "DELETE FROM dish_details WHERE id='$current_dish_details_deleted_id'");
+	spellon_redirect('edit_dish.php?dish_edit_id='.$current_edit_dish_id);
+}
 
 // change status
 if( isset( $_GET['dish_status_id'] ) ){

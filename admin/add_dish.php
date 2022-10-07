@@ -15,14 +15,6 @@ require_once('header.php'); ?>
             <div class="col-12 grid-margin stretch-card">
               <div class="card">
                 <div class="card-body">
-                    <?php
-                        spellon_print_r( $_POST );
-                        echo "<pre>";
-                        print_r( $_FILES );
-                        echo "</pre>";
-                        
-
-                    ?>
 					<form class="forms-sample" action="" method="POST" enctype="multipart/form-data">
                         <div class="form-group">
 							<label for="name">Name</label>
@@ -53,14 +45,26 @@ require_once('header.php'); ?>
                                     <?php
                                     endforeach; 
                                 endif;
-                                ?>   
-                                
+                                ?>
                             </select>
                         </div>
 
+                        <div class="form-group" id="disb_box_1">
+                            <div class="row mb-3">
+                                <div class="col-5">
+                                    <input type="text" name="attribute[]" class="form-control" id="attribute" placeholder="Add Atribute" required>
+                                </div>
+                                <div class="col-5">
+                                    <input type="text" name="price[]" class="form-control" id="price" placeholder="Add Price" required>
+                                </div>
+                            </div>
+                        </div>
+
 						<button type="submit" name="dish_item_submit" class="btn btn-primary mr-2">Add Dish</button>
-						<button class="btn btn-light">Cancel</button>
+						<button type="button" class="btn btn-danger" onclick="add_more()">Add More</button>
 					</form>
+
+                    <input type="hidden" name="add_number" id="add_more" class="form-class mt-5" value="1">
                 </div>
               </div>
             </div>
@@ -68,6 +72,21 @@ require_once('header.php'); ?>
 		 </div>
         
 		</div>
+
+        <script>
+            function add_more(){
+                var add_more = jQuery('#add_more').val();
+                add_more++;
+                jQuery('#add_more').val(add_more);
+  
+                var dish_box ='<div class="row mb-3" id="box'+add_more+'"><div class="col-5"><input type="text" name="attribute[]" class="form-control" id="attribute" placeholder="Add Atribute" required></div><div class="col-5"><input type="text" name="price[]" class="form-control" id="price" placeholder="Add Price" required></div><div class="col-2"><button type="button" class="btn btn-danger" onclick="remove_more('+add_more+')">Remove More</button></div></div>';
+                jQuery("#disb_box_1").append(dish_box);
+            }
+
+            function remove_more(id){
+                jQuery('#box'+id).remove();
+            }
+          </script> 
         <!-- content-wrapper ends -->
         <!-- partial:../../partials/_footer.html -->
         <!-- content-wrapper ends -->
