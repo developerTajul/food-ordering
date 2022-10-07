@@ -91,7 +91,9 @@ if( isset( $_POST['update_dish_item'] ) ){
 		mysqli_query($con, "UPDATE dish SET name = '$update_name', slug ='$update_slug', content='$update_content', category_id = '$update_category_id' WHERE id='$update_dish_id'");  
     }
 
-
+	/**
+	 * Dish Item 
+	 */
 	$attributeArr = $_POST['attribute'];
 	$priceArr = $_POST['price'];
 	$dishDetailsIdArr = $_POST['dish_details_id'];

@@ -24,7 +24,7 @@ require_once('header.php'); ?>
 
 						<div class="form-group">
 							<label for="update_content">Dish Details</label>
-                            <textarea name="update_content" id="update_content" class="form-control" cols="30" rows="10"><?php echo $current_dish['content']; ?><?php echo $current_dish['content']; ?></textarea>
+                            <textarea name="update_content" id="update_content" class="form-control" cols="30" rows="10"><?php echo $current_dish['content']; ?></textarea>
 						</div>
 
                         <div class="form-group">
